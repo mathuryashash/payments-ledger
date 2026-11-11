@@ -76,7 +76,7 @@ API docs: http://localhost:18200/swagger-ui/index.html
 | Concurrency invariant (32 threads × 10 transfers) | 1 | Pass: money conserved, no negative balances |
 | **Total** | **21** | **All pass** |
 
-JaCoCo instruction coverage: **54%** (service + domain layer well covered; API controllers not unit-tested).
+JaCoCo instruction coverage: **80.8%** (37 tests, including 16 MockMvc API tests).
 
 ## Benchmark (laptop, docker compose)
 
@@ -96,7 +96,6 @@ See [docs/DESIGN.md](docs/DESIGN.md).
 
 ## Limitations / what's next
 
-- Coverage is 54%; API layer tests (MockMvc) would raise it.
 - API-key auth is simple; real deployments should use OAuth2/mTLS.
 - Outbox relay polls every 500ms; Debezium CDC would reduce latency to <100ms.
 - Postgres is single-node; for HA add Patroni or use managed RDS.
