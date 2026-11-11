@@ -4,7 +4,7 @@
 
 Machine: Windows 11 laptop, Docker Desktop 4.87 (WSL2), Intel i7-12th gen, 16 GB RAM.
 Java: OpenJDK 21.0.9 (JetBrains). Maven 3.9.16.
-Testcontainers: 1.20.4 with docker-java 3.4.2 (supports Docker Engine 29 API).
+Testcontainers: 1.21.4 (works with Docker Desktop 29.x from a clean clone; no home-directory config needed). Last full run: 37 tests, BUILD SUCCESS, 1 min 27 s.
 
 ## Tests
 
