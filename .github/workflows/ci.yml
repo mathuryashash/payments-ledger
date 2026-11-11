@@ -1,0 +1,39 @@
+name: CI
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up JDK 21
+        uses: actions/setup-java@v4
+        with:
+          java-version: '21'
+          distribution: 'temurin'
+          cache: maven
+
+      - name: Build and test with Maven
+        run: ./mvnw -B verify --no-transfer-progress
+
+      - name: Upload JaCoCo coverage report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: jacoco-report
+          path: target/site/jacoco/
+
+      - name: Build Docker image
+        run: docker build -t payments-ledger:ci .
+
+      - name: Lint GitHub Actions workflow
+        uses: docker://rhysd/actionlint:latest
+        with:
+          args: -color /github/workspace/.github/workflows/ci.yml
