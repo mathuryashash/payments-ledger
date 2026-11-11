@@ -7,10 +7,13 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ProblemDetail;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.HttpMessageNotReadableException;
+import org.springframework.web.ErrorResponse;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 
 import java.net.URI;
 import java.util.NoSuchElementException;
@@ -75,8 +78,23 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(pd);
     }
 
+    /** Malformed JSON or a path/query value of the wrong type is the client's fault: 400, not 500. */
+    @ExceptionHandler({HttpMessageNotReadableException.class, MethodArgumentTypeMismatchException.class})
+    public ResponseEntity<ProblemDetail> handleBadInput(Exception ex) {
+        ProblemDetail pd = ProblemDetail.forStatusAndDetail(HttpStatus.BAD_REQUEST, "Malformed request");
+        pd.setType(URI.create("https://ledger.example.com/errors/bad-request"));
+        pd.setTitle("Bad Request");
+        return ResponseEntity.badRequest().body(pd);
+    }
+
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ProblemDetail> handleGeneric(Exception ex, HttpServletRequest req) {
+        // Spring's own web exceptions (missing Idempotency-Key header, unsupported media type,
+        // method not allowed, ...) already carry the right 4xx status and a ProblemDetail body.
+        // Without this check the catch-all turned them all into 500s.
+        if (ex instanceof ErrorResponse er) {
+            return ResponseEntity.status(er.getStatusCode()).body(er.getBody());
+        }
         log.error("Unexpected error on {}: {}", req.getRequestURI(), ex.getMessage(), ex);
         ProblemDetail pd = ProblemDetail.forStatusAndDetail(HttpStatus.INTERNAL_SERVER_ERROR, "Internal server error");
         pd.setType(URI.create("https://ledger.example.com/errors/internal"));

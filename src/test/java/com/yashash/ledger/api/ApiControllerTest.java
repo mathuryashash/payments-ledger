@@ -510,4 +510,27 @@ class ApiControllerTest {
         account.setBalanceMinor(amount);
         accountRepo.save(account);
     }
+
+    @Test
+    void postTransfer_missing_idempotency_key_returns_400_not_500() throws Exception {
+        mockMvc.perform(post("/api/v1/transfers")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content("{\"reference\":\"x\",\"postings\":[]}"))
+            .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    void postTransfer_malformed_json_returns_400() throws Exception {
+        mockMvc.perform(post("/api/v1/transfers")
+                .header("Idempotency-Key", "bad-json-1")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content("{not json"))
+            .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    void getAccount_non_uuid_id_returns_400() throws Exception {
+        mockMvc.perform(get("/api/v1/accounts/not-a-uuid"))
+            .andExpect(status().isBadRequest());
+    }
 }

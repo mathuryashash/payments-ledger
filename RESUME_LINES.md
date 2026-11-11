@@ -3,7 +3,7 @@
 ## Bullets (≤ 30 words each)
 
 - Built a double-entry payments ledger (Java 21 + Spring Boot 3) with idempotency, deadlock-safe lock ordering, and transactional outbox → Kafka at-least-once delivery.
-- Verified 37 tests including a 32-thread concurrency invariant (zero lost updates, money conserved); p95 latency 88 ms at 125 rps on a laptop Docker setup.
+- Verified 40 tests including a 32-thread concurrency invariant (zero lost updates, money conserved); k6 load runs of 96-125 transfers/s on a laptop with 0 errors.
 - Implemented outbox pattern + idempotent Kafka consumer; PostgreSQL constraints (FK, CHECK, unique idempotency hash) enforce consistency without distributed transactions.
 
 ## Proven keywords (only what the code actually uses and tests)

@@ -76,7 +76,7 @@ API docs: http://localhost:18200/swagger-ui/index.html
 | Concurrency invariant (32 threads × 10 transfers) | 1 | Pass: money conserved, no negative balances |
 | **Total** | **21** | **All pass** |
 
-JaCoCo instruction coverage: **80.8%** (37 tests, including 16 MockMvc API tests).
+JaCoCo instruction coverage: **80.8%** (37 tests, including 16 MockMvc API tests; 3 more error-mapping tests added later, 40 total).
 
 ## Benchmark (laptop, docker compose)
 

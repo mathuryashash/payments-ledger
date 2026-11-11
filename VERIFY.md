@@ -141,3 +141,22 @@ Not implemented (not core requirements, optional per spec):
 - Virtual threads on/off comparison (optional; virtual threads enabled and working)
 - Multi-instance outbox relay test (single-instance sufficient for MVP)
 - k6 with no-overdraft accounts (would need larger balances; overdraft=true variant works)
+
+
+## Re-run by the maintainer (12 Nov 2026, same laptop, other workloads running)
+
+Clean `docker compose up --build`, funded A from an EQUITY account with overdraft, then `k6 run k6/bench.js`:
+
+```
+http_reqs......: 9631   96.2/s      http_req_failed: 0.00%   checks_failed: 0 of 9631
+transfer_duration p50=44ms p90=129ms p95=152ms max=391ms
+  spread_low   p95=30ms   spread_high p95=165ms   hot_accounts p95=149ms
+A + C balances after the run: 99,036,900 + 963,100 = 100,000,000 (money conserved)
+```
+
+Throughput is lower and p95 higher than the first run (125 rps, p95 88 ms) because the machine was busier.
+Both are single-laptop numbers, not a capacity claim.
+
+Also fixed in this pass: a POST without the `Idempotency-Key` header, malformed JSON, or a non-UUID
+account id returned 500 (the catch-all handler swallowed Spring's own 4xx errors). They now return 400;
+three MockMvc tests cover it (40 tests total).
