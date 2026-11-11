@@ -20,6 +20,7 @@
   <properties>
     <java.version>21</java.version>
     <testcontainers.version>1.20.4</testcontainers.version>
+    <docker-java.version>3.4.2</docker-java.version>
     <jqwik.version>1.9.0</jqwik.version>
     <springdoc.version>2.6.0</springdoc.version>
   </properties>
@@ -113,6 +114,19 @@
       <groupId>org.testcontainers</groupId>
       <artifactId>kafka</artifactId>
       <version>${testcontainers.version}</version>
+      <scope>test</scope>
+    </dependency>
+    <!-- Explicit docker-java for Docker Engine 29 API compatibility -->
+    <dependency>
+      <groupId>com.github.docker-java</groupId>
+      <artifactId>docker-java-core</artifactId>
+      <version>${docker-java.version}</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>com.github.docker-java</groupId>
+      <artifactId>docker-java-transport-zerodep</artifactId>
+      <version>${docker-java.version}</version>
       <scope>test</scope>
     </dependency>
     <dependency>
